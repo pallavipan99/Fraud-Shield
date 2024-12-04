@@ -16,14 +16,15 @@ def home():
 def ping():
     return jsonify({"status": "success", "message": "pong"}), 200
 
-# ✅ New /predict endpoint
+# ✅ Enhanced /predict endpoint
 @app.route("/api/predict", methods=["POST"])
 def predict():
     """
-    Expects JSON input with feature values for a single transaction:
+    Accepts JSON input:
     {
-        "features": [value1, value2, ..., valueN]
+        "features": [[v1, v2, ..., vN], [v1, v2, ..., vN], ...]
     }
+    Returns predictions and probabilities for multiple transactions.
     """
     data = request.get_json()
     features = data.get("features")
@@ -32,9 +33,11 @@ def predict():
         return jsonify({"error": "No features provided"}), 400
 
     try:
-        df = pd.DataFrame([features])
-        prediction = model.predict(df)
-        return jsonify({"prediction": int(prediction[0])})
+        df = pd.DataFrame(features)
+        preds = model.predict(df)
+        probs = model.predict_proba(df).tolist()
+        response = [{"prediction": int(p), "probabilities": prob} for p, prob in zip(preds, probs)]
+        return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
