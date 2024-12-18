@@ -1,19 +1,24 @@
 import React, { useState } from "react";
 
 function App() {
+  const [features, setFeatures] = useState(Array(10).fill("")); // Example 10 features
   const [prediction, setPrediction] = useState(null);
 
-  // Example feature array for a single transaction
-  const exampleFeatures = [0.1, -1.2, 0.5, 0.3, -0.4, 0.2, 1.1, -0.5, 0.0, 0.7]; // Adjust length to match dataset
+  const handleChange = (index, value) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
 
   const handlePredict = async () => {
     try {
+      // Convert string inputs to numbers
+      const numericFeatures = features.map(f => parseFloat(f));
       const response = await fetch("http://localhost:5000/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ features: [exampleFeatures] }),
+        body: JSON.stringify({ features: [numericFeatures] }),
       });
-
       const data = await response.json();
       if (Array.isArray(data) && data.length > 0) {
         setPrediction(data[0].prediction);
@@ -29,25 +34,45 @@ function App() {
   return (
     <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", marginTop: "50px" }}>
       <h1>🚀 Fraud Shield</h1>
-      <p>Protecting users with intelligent fraud detection.</p>
-      <button
-        style={{
-          padding: "10px 20px",
-          border: "none",
-          borderRadius: "5px",
-          backgroundColor: "#007BFF",
-          color: "white",
-          fontSize: "16px",
-          cursor: "pointer",
+      <p>Enter transaction features to get a fraud prediction:</p>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          handlePredict();
         }}
-        onClick={handlePredict}
       >
-        Get Prediction
-      </button>
+        {features.map((f, i) => (
+          <input
+            key={i}
+            type="number"
+            placeholder={`Feature ${i + 1}`}
+            value={features[i]}
+            onChange={e => handleChange(i, e.target.value)}
+            style={{ margin: "5px", width: "100px" }}
+          />
+        ))}
+        <br />
+        <button
+          type="submit"
+          style={{
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            backgroundColor: "#007BFF",
+            color: "white",
+            fontSize: "16px",
+            cursor: "pointer",
+            marginTop: "10px"
+          }}
+        >
+          Predict
+        </button>
+      </form>
       {prediction !== null && <h2>Prediction: {prediction}</h2>}
     </div>
   );
 }
 
 export default App;
+
 
