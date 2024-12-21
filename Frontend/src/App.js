@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 function App() {
   const [features, setFeatures] = useState(Array(10).fill("")); // Example 10 features
-  const [prediction, setPrediction] = useState(null);
+  const [results, setResults] = useState([]); // Array of prediction results
 
   const handleChange = (index, value) => {
     const newFeatures = [...features];
@@ -12,7 +12,6 @@ function App() {
 
   const handlePredict = async () => {
     try {
-      // Convert string inputs to numbers
       const numericFeatures = features.map(f => parseFloat(f));
       const response = await fetch("http://localhost:5000/api/predict", {
         method: "POST",
@@ -20,14 +19,14 @@ function App() {
         body: JSON.stringify({ features: [numericFeatures] }),
       });
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setPrediction(data[0].prediction);
+      if (Array.isArray(data)) {
+        setResults(data); // Save response array
       } else {
-        setPrediction("Error: Invalid response from API");
+        setResults([{ prediction: "Error", probabilities: [] }]);
       }
     } catch (error) {
       console.error(error);
-      setPrediction("Error calling API");
+      setResults([{ prediction: "Error", probabilities: [] }]);
     }
   };
 
@@ -68,11 +67,37 @@ function App() {
           Predict
         </button>
       </form>
-      {prediction !== null && <h2>Prediction: {prediction}</h2>}
+
+      {results.length > 0 && (
+        <table
+          style={{
+            margin: "20px auto",
+            borderCollapse: "collapse",
+            width: "80%"
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
+              <th style={{ border: "1px solid black", padding: "8px" }}>Prediction</th>
+              <th style={{ border: "1px solid black", padding: "8px" }}>Probability (Fraud)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((res, idx) => (
+              <tr key={idx}>
+                <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
+                <td style={{ border: "1px solid black", padding: "8px" }}>{res.prediction}</td>
+                <td style={{ border: "1px solid black", padding: "8px" }}>
+                  {res.probabilities && res.probabilities[1] ? res.probabilities[1].toFixed(4) : "N/A"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
 
 export default App;
-
-
