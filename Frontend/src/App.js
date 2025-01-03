@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 function App() {
-  const [features, setFeatures] = useState(Array(10).fill("")); // Example 10 features
-  const [results, setResults] = useState([]); // Array of prediction results
+  const [features, setFeatures] = useState(Array(10).fill(""));
+  const [results, setResults] = useState([]);
 
   const handleChange = (index, value) => {
     const newFeatures = [...features];
@@ -20,7 +21,7 @@ function App() {
       });
       const data = await response.json();
       if (Array.isArray(data)) {
-        setResults(data); // Save response array
+        setResults(data);
       } else {
         setResults([{ prediction: "Error", probabilities: [] }]);
       }
@@ -29,6 +30,14 @@ function App() {
       setResults([{ prediction: "Error", probabilities: [] }]);
     }
   };
+
+  // Prepare data for chart
+  const fraudCount = results.filter(r => r.prediction === 1).length;
+  const nonFraudCount = results.filter(r => r.prediction === 0).length;
+  const chartData = [
+    { name: "Non-Fraud", count: nonFraudCount },
+    { name: "Fraud", count: fraudCount },
+  ];
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", marginTop: "50px" }}>
@@ -69,35 +78,49 @@ function App() {
       </form>
 
       {results.length > 0 && (
-        <table
-          style={{
-            margin: "20px auto",
-            borderCollapse: "collapse",
-            width: "80%"
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
-              <th style={{ border: "1px solid black", padding: "8px" }}>Prediction</th>
-              <th style={{ border: "1px solid black", padding: "8px" }}>Probability (Fraud)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((res, idx) => (
-              <tr key={idx}>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{res.prediction}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>
-                  {res.probabilities && res.probabilities[1] ? res.probabilities[1].toFixed(4) : "N/A"}
-                </td>
+        <>
+          <h2>Prediction Results Table</h2>
+          <table
+            style={{
+              margin: "20px auto",
+              borderCollapse: "collapse",
+              width: "80%"
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
+                <th style={{ border: "1px solid black", padding: "8px" }}>Prediction</th>
+                <th style={{ border: "1px solid black", padding: "8px" }}>Probability (Fraud)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {results.map((res, idx) => (
+                <tr key={idx}>
+                  <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
+                  <td style={{ border: "1px solid black", padding: "8px" }}>{res.prediction}</td>
+                  <td style={{ border: "1px solid black", padding: "8px" }}>
+                    {res.probabilities && res.probabilities[1] ? res.probabilities[1].toFixed(4) : "N/A"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h2>Fraud vs Non-Fraud Chart</h2>
+          <BarChart width={500} height={300} data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis allowDecimals={false} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#007BFF" />
+          </BarChart>
+        </>
       )}
     </div>
   );
 }
 
 export default App;
+
