@@ -31,13 +31,18 @@ function App() {
     }
   };
 
-  // Prepare data for chart
+  // Prepare chart data
   const fraudCount = results.filter(r => r.prediction === 1).length;
   const nonFraudCount = results.filter(r => r.prediction === 0).length;
   const chartData = [
     { name: "Non-Fraud", count: nonFraudCount },
     { name: "Fraud", count: fraudCount },
   ];
+
+  // Prepare flagged transactions
+  const flaggedTransactions = results
+    .map((res, idx) => ({ ...res, transaction: idx + 1 }))
+    .filter(res => res.prediction === 1);
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", marginTop: "50px" }}>
@@ -116,6 +121,19 @@ function App() {
             <Legend />
             <Bar dataKey="count" fill="#007BFF" />
           </BarChart>
+
+          <h2>Flagged Transactions</h2>
+          {flaggedTransactions.length > 0 ? (
+            <ul>
+              {flaggedTransactions.map(t => (
+                <li key={t.transaction}>
+                  Transaction {t.transaction}: Fraud Probability {t.probabilities[1].toFixed(4)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No transactions flagged as fraud.</p>
+          )}
         </>
       )}
     </div>
@@ -123,4 +141,5 @@ function App() {
 }
 
 export default App;
+
 
