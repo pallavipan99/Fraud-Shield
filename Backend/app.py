@@ -16,15 +16,15 @@ def home():
 def ping():
     return jsonify({"status": "success", "message": "pong"}), 200
 
-# ✅ Enhanced /predict endpoint
+# ✅ Expose /predict API
 @app.route("/api/predict", methods=["POST"])
 def predict():
     """
     Accepts JSON input:
     {
-        "features": [[v1, v2, ..., vN], [v1, v2, ..., vN], ...]
+        "features": [[v1, v2, ..., vN], ...]
     }
-    Returns predictions and probabilities for multiple transactions.
+    Returns predictions and probabilities.
     """
     data = request.get_json()
     features = data.get("features")
@@ -43,3 +43,4 @@ def predict():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
