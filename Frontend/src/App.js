@@ -31,28 +31,23 @@ function App() {
     }
   };
 
-  // Prepare chart data
   const fraudCount = results.filter(r => r.prediction === 1).length;
   const nonFraudCount = results.filter(r => r.prediction === 0).length;
   const chartData = [
     { name: "Non-Fraud", count: nonFraudCount },
     { name: "Fraud", count: fraudCount },
   ];
-
-  // Prepare flagged transactions
   const flaggedTransactions = results
     .map((res, idx) => ({ ...res, transaction: idx + 1 }))
     .filter(res => res.prediction === 1);
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", marginTop: "50px" }}>
-      <h1>🚀 Fraud Shield</h1>
-      <p>Enter transaction features to get a fraud prediction:</p>
+    <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", margin: "50px auto", maxWidth: "800px" }}>
+      <h1 style={{ color: "#007BFF" }}>🚀 Fraud Shield</h1>
+      <p>Enter transaction features below and get fraud predictions:</p>
       <form
-        onSubmit={e => {
-          e.preventDefault();
-          handlePredict();
-        }}
+        onSubmit={e => { e.preventDefault(); handlePredict(); }}
+        style={{ marginBottom: "20px" }}
       >
         {features.map((f, i) => (
           <input
@@ -61,17 +56,17 @@ function App() {
             placeholder={`Feature ${i + 1}`}
             value={features[i]}
             onChange={e => handleChange(i, e.target.value)}
-            style={{ margin: "5px", width: "100px" }}
+            style={{ margin: "5px", width: "90px", padding: "5px", borderRadius: "4px", border: "1px solid #ccc" }}
           />
         ))}
         <br />
         <button
           type="submit"
           style={{
-            padding: "10px 20px",
+            padding: "10px 25px",
             border: "none",
             borderRadius: "5px",
-            backgroundColor: "#007BFF",
+            backgroundColor: "#28a745",
             color: "white",
             fontSize: "16px",
             cursor: "pointer",
@@ -84,14 +79,8 @@ function App() {
 
       {results.length > 0 && (
         <>
-          <h2>Prediction Results Table</h2>
-          <table
-            style={{
-              margin: "20px auto",
-              borderCollapse: "collapse",
-              width: "80%"
-            }}
-          >
+          <h2>Prediction Results</h2>
+          <table style={{ margin: "20px auto", borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
                 <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
@@ -141,5 +130,6 @@ function App() {
 }
 
 export default App;
+
 
 
