@@ -42,12 +42,12 @@ function App() {
     .filter(res => res.prediction === 1);
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", textAlign: "center", margin: "50px auto", maxWidth: "800px" }}>
+    <div style={{ fontFamily: "Arial, sans-serif", margin: "50px auto", maxWidth: "900px", textAlign: "center" }}>
       <h1 style={{ color: "#007BFF" }}>🚀 Fraud Shield</h1>
-      <p>Enter transaction features below and get fraud predictions:</p>
+      <p>Enter transaction features below to get fraud predictions:</p>
       <form
         onSubmit={e => { e.preventDefault(); handlePredict(); }}
-        style={{ marginBottom: "20px" }}
+        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px", marginBottom: "20px" }}
       >
         {features.map((f, i) => (
           <input
@@ -56,10 +56,9 @@ function App() {
             placeholder={`Feature ${i + 1}`}
             value={features[i]}
             onChange={e => handleChange(i, e.target.value)}
-            style={{ margin: "5px", width: "90px", padding: "5px", borderRadius: "4px", border: "1px solid #ccc" }}
+            style={{ width: "80px", padding: "5px", borderRadius: "4px", border: "1px solid #ccc" }}
           />
         ))}
-        <br />
         <button
           type="submit"
           style={{
@@ -69,8 +68,7 @@ function App() {
             backgroundColor: "#28a745",
             color: "white",
             fontSize: "16px",
-            cursor: "pointer",
-            marginTop: "10px"
+            cursor: "pointer"
           }}
         >
           Predict
@@ -80,26 +78,28 @@ function App() {
       {results.length > 0 && (
         <>
           <h2>Prediction Results</h2>
-          <table style={{ margin: "20px auto", borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
-                <th style={{ border: "1px solid black", padding: "8px" }}>Prediction</th>
-                <th style={{ border: "1px solid black", padding: "8px" }}>Probability (Fraud)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.map((res, idx) => (
-                <tr key={idx}>
-                  <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
-                  <td style={{ border: "1px solid black", padding: "8px" }}>{res.prediction}</td>
-                  <td style={{ border: "1px solid black", padding: "8px" }}>
-                    {res.probabilities && res.probabilities[1] ? res.probabilities[1].toFixed(4) : "N/A"}
-                  </td>
+          <div style={{ maxHeight: "300px", overflowY: "auto", marginBottom: "20px" }}>
+            <table style={{ margin: "0 auto", borderCollapse: "collapse", width: "100%" }}>
+              <thead>
+                <tr>
+                  <th style={{ border: "1px solid black", padding: "8px" }}>Transaction</th>
+                  <th style={{ border: "1px solid black", padding: "8px" }}>Prediction</th>
+                  <th style={{ border: "1px solid black", padding: "8px" }}>Probability (Fraud)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {results.map((res, idx) => (
+                  <tr key={idx}>
+                    <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
+                    <td style={{ border: "1px solid black", padding: "8px" }}>{res.prediction}</td>
+                    <td style={{ border: "1px solid black", padding: "8px" }}>
+                      {res.probabilities && res.probabilities[1] ? res.probabilities[1].toFixed(4) : "N/A"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <h2>Fraud vs Non-Fraud Chart</h2>
           <BarChart width={500} height={300} data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -130,6 +130,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
