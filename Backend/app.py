@@ -24,3 +24,13 @@ def predict():
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
+# Load RandomForest model as before
+# model = joblib.load("backend/random_forest_model.pkl")
+try:
+    xgb_model_path = "backend/xgboost_model.pkl"
+    xgb_model = joblib.load(xgb_model_path)
+    model = xgb_model
+    print("Using XGBoost model")
+except FileNotFoundError:
+    print("XGBoost model not found. Using RandomForest")
+
