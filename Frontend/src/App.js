@@ -131,5 +131,26 @@ function App() {
                 <li key={t.transaction} style={{ backgroundColor: "#fff3cd", padding: "8px", marginBottom: "5px", borderRadius: "4px" }}>
                   Transaction {t.tra
 
+const [currentModel, setCurrentModel] = useState("Unknown");
+
+// Inside handlePredict after getting response
+try {
+  const response = await fetch("http://localhost:5000/api/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ features: [numericFeatures] }),
+  });
+  const data = await response.json();
+
+  // Optional: get model info from headers or response
+  const modelHeader = response.headers.get("X-Model-Used");
+  if (modelHeader) setCurrentModel(modelHeader);
+
+  if (Array.isArray(data)) setResults(data);
+  else setResults([{ prediction: "Error", probabilities: [] }]);
+} catch (error) {
+  console.error(error);
+  setResults([{ prediction: "Error", probabilities: [] }]);
+}
 
 
