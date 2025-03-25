@@ -56,16 +56,3 @@ for message in consumer:
 
     print("Transaction:", transaction)
     print(f"Predictions → RF: {rf_pred}, XGB: {xgb_pred}, NN: {nn_pred}")
-
-# Path to save flagged transactions
-flagged_path = "data/flagged_transactions.csv"
-
-# Check if transaction is flagged by any model
-if rf_pred == 1 or xgb_pred == 1 or (nn_pred is not None and nn_pred >= 0.5):
-    flagged_df = pd.DataFrame([transaction])
-    # Append to CSV
-    if os.path.exists(flagged_path):
-        flagged_df.to_csv(flagged_path, mode='a', header=False, index=False)
-    else:
-        flagged_df.to_csv(flagged_path, mode='w', header=True, index=False)
-    print("Transaction flagged and logged to CSV.")
