@@ -128,3 +128,17 @@ function App() {
 
 
 
+// Example: polling backend endpoint /stream-fraud every 2 seconds
+useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/stream-fraud");
+      const data = await response.json();
+      if (data.length > 0) setStreamAlerts(prev => [...data, ...prev]);
+    } catch (err) {
+      console.error("Error fetching stream alerts:", err);
+    }
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
