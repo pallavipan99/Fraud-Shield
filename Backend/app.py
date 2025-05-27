@@ -68,4 +68,4 @@ def predict():
 @jwt_required()
 def stream_fraud():
     # Return last 10 flagged transactions
-    return jsonify(flagged_transactions[-10:])
+    return jsonify(flagged_transaction[-10:])
