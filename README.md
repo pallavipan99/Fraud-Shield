@@ -204,8 +204,3 @@ This is a **starting point** for serverless deployment; you’ll still need to p
 - **Feature names accepted**: The backend can consume either **Kaggle** feature names (`V1..V28`, `Amount`) or **synthetic** names (`f1..f30`, `amount`). `utils.py` maps alternates to the expected feature list (`meta.json`).
 - **Database URL**: Change to Postgres/MySQL by setting `DB_URL` (e.g., `postgresql+psycopg://user:pass@host/dbname`). SQLAlchemy will create the schema on first run.
 - **Ports**: Backend defaults to `5001`; Vite dev server typically uses `5173`/`5174`. If you change the backend port, set `VITE_API_BASE_URL` accordingly.
----
-
-## License
-
-MIT License. Review the license before reuse in production or regulated environments.
